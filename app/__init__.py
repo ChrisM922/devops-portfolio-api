@@ -102,7 +102,7 @@ def create_app(config=None, registry=None):
     
     # Register blueprints
     from app.routes import bp
-    app.register_blueprint(bp)
+    app.register_blueprint(bp, url_prefix='')
     
     # Ensure the instance folder exists
     try:

@@ -119,7 +119,7 @@ def delete_task(task_id):
         logger.error(f"Error deleting task {task_id}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-@bp.route('/health')
+@bp.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint for monitoring."""
     try:

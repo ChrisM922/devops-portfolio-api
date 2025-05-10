@@ -95,10 +95,6 @@ The application will be available at `http://localhost:5000`
 - SQLAlchemy is used as the ORM
 - Docker is used for containerization
 
-## 📝 License
+## Live Demo
 
-[Add your license information here]
-
-## 👥 Contributing
-
-[Add contribution guidelines here]
+The application is deployed at: [https://devops-portfolio-api.onrender.com](https://devops-portfolio-api.onrender.com)

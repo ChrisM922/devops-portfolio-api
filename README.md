@@ -155,3 +155,33 @@ A health check endpoint is available at `/health`:
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
+
+## 📊 Code Coverage
+
+The project maintains high code coverage through comprehensive testing:
+
+- Unit tests for all routes and models
+- Integration tests for database operations
+- API endpoint testing
+- Error handling coverage
+
+Current coverage: [![Coverage](https://codecov.io/gh/ChrisM922/devops-portfolio-api/branch/main/graph/badge.svg)](https://codecov.io/gh/ChrisM922/devops-portfolio-api)
+
+View detailed coverage report: [Codecov Dashboard](https://codecov.io/gh/ChrisM922/devops-portfolio-api)
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run tests with coverage report
+pytest --cov=app tests/
+
+# Generate HTML coverage report
+pytest --cov=app --cov-report=html tests/
+```
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

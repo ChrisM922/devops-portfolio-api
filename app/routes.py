@@ -1,8 +1,9 @@
 from flask import request, jsonify
 
+
 def register_routes(app):
     from app.database import db
-    from app.models import Task 
+    from app.models import Task
 
     @app.route('/tasks', methods=['POST'])
     def create_task():
@@ -34,7 +35,12 @@ def register_routes(app):
         task = Task.query.get(task_id)
         if not task:
             return jsonify({'error': 'Task not found'}), 404
-        return jsonify({'id': task.id, 'title': task.title, 'description': task.description, 'done': task.done})
+        return jsonify({
+            'id': task.id,
+            'title': task.title,
+            'description': task.description,
+            'done': task.done
+        })
 
     @app.route('/tasks/<int:task_id>', methods=['PUT'])
     def update_task(task_id):
@@ -46,7 +52,12 @@ def register_routes(app):
         task.description = data.get('description', task.description)
         task.done = data.get('done', task.done)
         db.session.commit()
-        return jsonify({'id': task.id, 'title': task.title, 'description': task.description, 'done': task.done})
+        return jsonify({
+            'id': task.id,
+            'title': task.title,
+            'description': task.description,
+            'done': task.done
+        })
 
     @app.route('/tasks/<int:task_id>', methods=['DELETE'])
     def delete_task(task_id):

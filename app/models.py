@@ -1,5 +1,5 @@
 from app.database import db
-from flask_sqlalchemy import SQLAlchemy
+
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -17,6 +17,12 @@ def create_app(config_object=None):
     # Load configuration
     if config_object:
         app.config.from_object(config_object)
+    else:
+        app.config.from_object(Config)
+    
+    # Ensure database URI is set
+    if not app.config.get('SQLALCHEMY_DATABASE_URI'):
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     
     # Initialize extensions
     db.init_app(app)

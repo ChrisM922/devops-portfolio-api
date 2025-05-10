@@ -6,6 +6,7 @@ from prometheus_flask_exporter import PrometheusMetrics
 from prometheus_client import CollectorRegistry, Counter
 from app.config import Config
 from app.database import db
+from sqlalchemy import text
 
 def init_metrics(app, registry=None):
     """Initialize Prometheus metrics."""
@@ -66,6 +67,34 @@ def create_app(config_class=Config, registry=None):
         try:
             db.create_all()
             logger.info("Database tables created successfully")
+            
+            # Check and update database schema if needed
+            try:
+                # Check if the task table has timestamp columns
+                result = db.session.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'task' AND column_name = 'created_at'"))
+                has_created_at = result.scalar() is not None
+                
+                result = db.session.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'task' AND column_name = 'updated_at'"))
+                has_updated_at = result.scalar() is not None
+                
+                # Add missing columns if needed
+                if not has_created_at:
+                    logger.info("Adding created_at column to task table")
+                    db.session.execute(text("ALTER TABLE task ADD COLUMN created_at TIMESTAMP"))
+                    
+                if not has_updated_at:
+                    logger.info("Adding updated_at column to task table")
+                    db.session.execute(text("ALTER TABLE task ADD COLUMN updated_at TIMESTAMP"))
+                    
+                if not has_created_at or not has_updated_at:
+                    db.session.commit()
+                    logger.info("Database schema updated successfully")
+            
+            except Exception as e:
+                db.session.rollback()
+                logger.warning(f"Could not update database schema: {str(e)}")
+                # Continue execution even if we can't add the columns
+        
         except Exception as e:
             logger.error(f"Error creating database tables: {str(e)}")
             raise

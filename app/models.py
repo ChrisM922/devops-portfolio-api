@@ -12,8 +12,10 @@ class Task(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500))
     done = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Make timestamp fields nullable
+    created_at = db.Column(db.DateTime, nullable=True)
+    updated_at = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         return f'<Task {self.title}>'
@@ -23,6 +25,9 @@ class Task(db.Model):
             raise ValueError("Title must be a string")
         self.title = title
         self.description = description
+        # Initialize timestamps here in case the DB doesn't have these columns
+        self.created_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
 
     @validates('title')
     def validate_title(self, key, title):
@@ -36,11 +41,15 @@ class Task(db.Model):
 
     def to_dict(self):
         """Convert task to dictionary."""
-        return {
+        result = {
             'id': self.id,
             'title': self.title,
             'description': self.description or '',
-            'done': self.done,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'done': self.done
         }
+        # Only add timestamp fields if they exist
+        if self.created_at:
+            result['created_at'] = self.created_at.isoformat()
+        if self.updated_at:
+            result['updated_at'] = self.updated_at.isoformat()
+        return result

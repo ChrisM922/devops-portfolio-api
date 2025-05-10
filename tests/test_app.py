@@ -43,10 +43,11 @@ def client(app):
 @pytest.fixture
 def sample_task(app):
     """Create a sample task for testing."""
-    task = Task(title='Sample Task', description='Sample Description')
     with app.app_context():
+        task = Task(title='Sample Task', description='Sample Description')
         db.session.add(task)
         db.session.commit()
+        db.session.refresh(task)  # Ensure task is refreshed from database
         return task
 
 def test_health_check(client):
@@ -152,5 +153,6 @@ def test_error_handling(client):
     assert response.json['error'] == 'Resource not found'
 
     # Test 500 error (by causing a database error)
-    with pytest.raises(Exception):
-        client.post('/api/tasks', json={'invalid': 'data'})
+    response = client.post('/api/tasks', json={'invalid': 'data'})
+    assert response.status_code == 500
+    assert 'error' in response.json

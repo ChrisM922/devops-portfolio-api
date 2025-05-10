@@ -90,8 +90,8 @@ def test_database_rollback(app, client):
     task_id = response.json['id']
     
     # Simulate error by sending invalid data
-    with pytest.raises(Exception):
-        client.post('/api/tasks', json={'invalid': 'data'})
+    error_response = client.post('/api/tasks', json={'invalid': 'data'})
+    assert error_response.status_code == 500
     
     # Verify database state is unchanged
     get_response = client.get('/api/tasks')

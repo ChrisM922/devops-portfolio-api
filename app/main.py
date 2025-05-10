@@ -1,5 +1,6 @@
 import sys
 import os
+from flask import request
 from app import create_app
 from prometheus_flask_exporter import PrometheusMetrics
 import logging

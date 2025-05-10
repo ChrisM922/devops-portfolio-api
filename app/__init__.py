@@ -100,9 +100,9 @@ def create_app(config=None, registry=None):
             {'Content-Type': 'application/json'}
         )
     
-    # Register blueprints
-    from app.routes import bp
-    app.register_blueprint(bp, url_prefix='')
+    # Import and register routes
+    from app.routes import register_routes
+    register_routes(app)
     
     # Ensure the instance folder exists
     try:

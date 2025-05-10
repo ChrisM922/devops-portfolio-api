@@ -1,0 +1,39 @@
+<div
+  class="bg-white shadow-md rounded px-8 py-6"
+  hx-target="this"
+  hx-swap="outerHTML"
+>
+  <div class="flex justify-between items-center">
+    <div class="flex-1">
+      <h3
+        class="text-xl font-semibold {% if task.done %}line-through text-gray-500{% endif %}"
+      >
+        {{ task.title }}
+      </h3>
+      {% if task.description %}
+      <p class="text-gray-600 mt-2 {% if task.done %}line-through{% endif %}">
+        {{ task.description }}
+      </p>
+      {% endif %}
+      <p class="text-sm text-gray-500 mt-2">
+        Created: {{ task.created_at.strftime('%Y-%m-%d %H:%M') }} {% if
+        task.updated_at != task.created_at %} | Updated: {{
+        task.updated_at.strftime('%Y-%m-%d %H:%M') }} {% endif %}
+      </p>
+    </div>
+    <div class="flex space-x-2">
+      <button
+        hx-put="/api/tasks/{{ task.id }}"
+        class="{% if task.done %}bg-yellow-500 hover:bg-yellow-600{% else %}bg-green-500 hover:bg-green-600{% endif %} text-white font-bold py-2 px-4 rounded"
+      >
+        {% if task.done %}Undo{% else %}Complete{% endif %}
+      </button>
+      <button
+        hx-delete="/api/tasks/{{ task.id }}"
+        class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

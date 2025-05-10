@@ -1,0 +1,5 @@
+{% for task in tasks %} {% include 'task.html' %} {% else %}
+<div class="bg-white shadow-md rounded px-8 py-6 text-center text-gray-500">
+  No tasks found. Add a new task above!
+</div>
+{% endfor %}

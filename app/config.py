@@ -1,25 +1,25 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env.local
-load_dotenv('.env.local')
-
+# Load environment variables from .env file
+load_dotenv()
 
 class Config:
+    """Base configuration."""
+    SECRET_KEY = os.getenv('SECRET_KEY', 'dev')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # Get database URI from environment
-    DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+    # Session configuration
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
     
-    # Parse DATABASE_URL for Render
-    if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
-        SQLALCHEMY_DATABASE_URI = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-    else:
-        SQLALCHEMY_DATABASE_URI = DATABASE_URL
-
+    # Database connection options
     SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_pre_ping': True,
-        'pool_recycle': 300,
+        'pool_size': 10,
+        'pool_recycle': 3600,
+        'pool_pre_ping': True
     }
 
     def __init__(self):

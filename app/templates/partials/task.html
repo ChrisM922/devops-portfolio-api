@@ -1,0 +1,32 @@
+<div id="task-{{ task.id }}" class="bg-white p-4 rounded shadow">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <button
+        hx-put="/api/tasks/{{ task.id }}"
+        hx-target="#task-{{ task.id }}"
+        hx-swap="outerHTML"
+        class="w-6 h-6 border rounded-full flex items-center justify-center {% if task.completed %}bg-green-500 text-white{% endif %}"
+      >
+        {% if task.completed %}✓{% else %}Mark as Done{% endif %}
+      </button>
+      <div>
+        <h3
+          class="font-semibold {% if task.completed %}text-decoration-line-through text-gray-500{% endif %}"
+        >
+          {{ task.title }}
+        </h3>
+        {% if task.description %}
+        <p class="text-gray-600">{{ task.description }}</p>
+        {% endif %}
+      </div>
+    </div>
+    <button
+      hx-delete="/api/tasks/{{ task.id }}"
+      hx-target="#task-{{ task.id }}"
+      hx-swap="outerHTML"
+      class="text-red-500 hover:text-red-700"
+    >
+      ×
+    </button>
+  </div>
+</div>

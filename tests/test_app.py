@@ -4,14 +4,15 @@ from app.database import db
 from app.models import Task
 from sqlalchemy import inspect
 import logging
+import os
 
 @pytest.fixture
 def app():
     app = create_app()
     app.config.update({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
-        'SQLALCHEMY_TRACK_MODIFICATIONS': False
+        'SQLALCHEMY_DATABASE_URI': os.getenv('SQLALCHEMY_DATABASE_URI'),
+        'SQLALCHEMY_TRACK_MODIFICATIONS': os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS') == 'True'
     })
     
     with app.app_context():

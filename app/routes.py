@@ -13,10 +13,12 @@ def register_routes(app):
     @app.route('/tasks', methods=['POST'])
     def create_task():
         data = request.form if request.form else request.get_json()
-        task = Task(title=data.get('title'), description=data.get('description'))
+        task = Task(
+            title=data.get('title'),
+            description=data.get('description')
+        )
         db.session.add(task)
         db.session.commit()
-        
         if request.headers.get('HX-Request'):
             return render_template('_task.html', task=task)
         return jsonify({
@@ -30,7 +32,7 @@ def register_routes(app):
     def get_tasks():
         tasks = Task.query.all()
         if request.headers.get('HX-Request'):
-            return render_template('_task.html', task=task)
+            return render_template('index.html', tasks=tasks)
         return jsonify([
             {
                 'id': t.id,
@@ -64,7 +66,6 @@ def register_routes(app):
         task.description = data.get('description', task.description)
         task.done = not task.done if 'done' in data else task.done
         db.session.commit()
-        
         if request.headers.get('HX-Request'):
             return render_template('_task.html', task=task)
         return jsonify({
@@ -81,7 +82,6 @@ def register_routes(app):
             return jsonify({'error': 'Task not found'}), 404
         db.session.delete(task)
         db.session.commit()
-        
         if request.headers.get('HX-Request'):
             return ''
         return jsonify({'message': 'Task deleted'})

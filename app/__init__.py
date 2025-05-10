@@ -99,6 +99,8 @@ def create_app(config=None, registry=None):
     
     # Import and register routes
     from app.routes import register_routes
+    
+    # Register routes
     register_routes(app)
     
     # Ensure the instance folder exists

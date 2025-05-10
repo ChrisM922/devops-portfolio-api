@@ -11,16 +11,6 @@ logger.setLevel(logging.INFO)
 def register_routes(app):
     """Register all routes with the Flask application."""
     
-    @app.route('/')
-    def index():
-        """Render the index page."""
-        try:
-            tasks = Task.query.all()
-            return render_template('index.html', tasks=tasks)
-        except Exception as e:
-            logger.error(f"Error retrieving tasks: {str(e)}")
-            return render_template('index.html', error=str(e)), 500
-
     @app.route('/health', methods=['GET'])
     def health_check():
         """Health check endpoint for monitoring."""
@@ -37,6 +27,16 @@ def register_routes(app):
                 'status': 'error',
                 'error': str(e)
             }), 500
+
+    @app.route('/')
+    def index():
+        """Render the index page."""
+        try:
+            tasks = Task.query.all()
+            return render_template('index.html', tasks=tasks)
+        except Exception as e:
+            logger.error(f"Error retrieving tasks: {str(e)}")
+            return render_template('index.html', error=str(e)), 500
 
     @app.route('/api/tasks', methods=['GET'])
     def get_tasks():

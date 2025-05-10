@@ -52,13 +52,20 @@ jobs:
           FLASK_ENV: testing
           SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
         run: |
-          pytest --cov=app tests/ --cov-report=xml
+          pytest --cov=app tests/ --cov-report=xml --cov-report=term
+
+      - name: Generate coverage report
+        run: |
+          coverage report
+          coverage xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./coverage.xml
-          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
 
   build:
     needs: test

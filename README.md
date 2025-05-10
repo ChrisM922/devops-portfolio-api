@@ -28,20 +28,20 @@ A Flask-based web application with PostgreSQL database, containerized using Dock
 
 ## 🛠️ Installation
 
-1. Clone the repository:
+-1. Clone the repository:
 
 ```bash
 git clone https://github.com/ChrisM922/devops-portfolio-api.git
 cd devops-portfolio-api
 ```
 
-2. Using Docker (Recommended):
+-2. Using Docker (Recommended):
 
 ```bash
 docker-compose up --build
 ```
 
-3. For local development:
+-3. For local development:
 
 ```bash
 # Create and activate virtual environment
@@ -88,7 +88,7 @@ The application will be available at `http://localhost:5000`
 
 ## 📁 Project Structure
 
-```
+```md
 .
 ├── app/                    # Application source code
 ├── .venv/                  # Python virtual environment

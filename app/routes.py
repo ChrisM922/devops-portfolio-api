@@ -1,4 +1,5 @@
 from flask import request, jsonify, render_template
+from sqlalchemy import text
 
 
 def register_routes(app):
@@ -8,8 +9,8 @@ def register_routes(app):
     @app.route('/health')
     def health_check():
         try:
-            # Test database connection
-            db.session.execute('SELECT 1')
+            # Test database connection using text()
+            db.session.execute(text('SELECT 1'))
             return jsonify({"status": "healthy", "database": "connected"}), 200
         except Exception as e:
             app.logger.error(f"Health check failed: {str(e)}")

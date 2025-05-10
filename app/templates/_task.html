@@ -1,0 +1,30 @@
+<div
+  class="border rounded-lg p-4 {% if task.done %}bg-gray-50{% endif %}"
+  hx-target="this"
+  hx-swap="outerHTML"
+>
+  <div class="flex items-start justify-between">
+    <div class="flex-1">
+      <h3
+        class="text-lg font-medium {% if task.done %}line-through text-gray-500{% endif %}"
+      >
+        {{ task.title }}
+      </h3>
+      <p class="mt-1 text-gray-600">{{ task.description }}</p>
+    </div>
+    <div class="flex space-x-2">
+      <button
+        hx-put="/tasks/{{ task.id }}"
+        class="text-sm px-3 py-1 rounded-md {% if task.done %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-800{% endif %}"
+      >
+        {% if task.done %}Done{% else %}Mark Done{% endif %}
+      </button>
+      <button
+        hx-delete="/tasks/{{ task.id }}"
+        class="text-sm px-3 py-1 rounded-md bg-red-100 text-red-800"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

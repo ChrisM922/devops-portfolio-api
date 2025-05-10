@@ -72,11 +72,11 @@ def register_routes(app):
         task = Task.query.get(task_id)
         if not task:
             return jsonify({'error': 'Task not found'}), 404
-        data = request.form if request.form else request.get_json()
-        task.title = data.get('title', task.title)
-        task.description = data.get('description', task.description)
-        task.done = not task.done if 'done' in data else task.done
+        
+        # Toggle the done status
+        task.done = not task.done
         db.session.commit()
+        
         if request.headers.get('HX-Request'):
             return render_template('_task.html', task=task)
         return jsonify({

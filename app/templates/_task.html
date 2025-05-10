@@ -15,6 +15,7 @@
     <div class="flex space-x-2">
       <button
         hx-put="/api/tasks/{{ task.id }}"
+        hx-headers='{"Content-Type": "application/json"}'
         class="text-indigo-600 hover:text-indigo-900"
       >
         {% if task.done %}Undo{% else %}Complete{% endif %}

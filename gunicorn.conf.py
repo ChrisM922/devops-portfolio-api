@@ -6,10 +6,10 @@ bind = "0.0.0.0:" + str(os.getenv("PORT", "5000"))
 backlog = 2048
 
 # Worker processes
-workers = multiprocessing.cpu_count() * 2 + 1
+workers = 2  # Reduced from CPU count * 2 + 1 to prevent memory issues
 worker_class = "sync"
 worker_connections = 1000
-timeout = 30
+timeout = 120  # Increased timeout
 keepalive = 2
 
 # Logging
@@ -31,6 +31,11 @@ umask = 0
 user = None
 group = None
 tmp_upload_dir = None
+
+# Memory settings
+max_requests = 1000
+max_requests_jitter = 50
+worker_tmp_dir = "/dev/shm"  # Use RAM for temporary files
 
 # Server hooks
 def on_starting(server):

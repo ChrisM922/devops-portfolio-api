@@ -17,3 +17,7 @@ services:
           property: connectionString
     healthCheckPath: /health
     autoDeploy: true
+    plan: free
+    memory: 512MB
+    disk: 1GB
+    numInstances: 1

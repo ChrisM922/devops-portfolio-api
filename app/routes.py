@@ -121,17 +121,17 @@ def delete_task(task_id):
 
 @bp.route('/health')
 def health_check():
-    """Health check endpoint."""
+    """Health check endpoint for monitoring."""
     try:
         # Test database connection
         db.session.execute(text('SELECT 1'))
         return jsonify({
             'status': 'healthy',
             'database': 'connected'
-        })
+        }), 200
     except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
+        current_app.logger.error(f"Health check failed: {str(e)}")
         return jsonify({
             'status': 'error',
-            'error': f'Database connection failed: {str(e)}'
+            'error': str(e)
         }), 500

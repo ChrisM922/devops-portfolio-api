@@ -8,7 +8,10 @@ def register_routes(app):
     @app.route('/tasks', methods=['POST'])
     def create_task():
         data = request.get_json()
-        task = Task(title=data.get('title'), description=data.get('description'))
+        task = Task(
+            title=data.get('title'),
+            description=data.get('description')
+        )
         db.session.add(task)
         db.session.commit()
         return jsonify({

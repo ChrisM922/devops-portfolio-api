@@ -1,16 +1,18 @@
 import pytest
 from app import create_app
-from app.models import Task
 from app.database import db
+from app.models import Task
 from sqlalchemy import inspect
 import logging
 
 @pytest.fixture
 def app():
     app = create_app()
-    app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/test_db'
-    app.config['FLASK_ENV'] = 'test'
+    app.config.update({
+        'TESTING': True,
+        'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
+        'SQLALCHEMY_TRACK_MODIFICATIONS': False
+    })
     
     with app.app_context():
         try:
@@ -40,6 +42,7 @@ def test_health_check(client):
     response = client.get('/health')
     assert response.status_code == 200
     assert response.json['status'] == 'healthy'
+    assert response.json['database'] == 'connected'
 
 def test_create_task(client):
     response = client.post('/api/tasks', json={
@@ -48,9 +51,11 @@ def test_create_task(client):
     })
     assert response.status_code == 201
     assert response.json['title'] == 'Test Task'
+    assert response.json['description'] == 'Test Description'
+    assert not response.json['done']
 
 def test_get_tasks(client):
-    # Create a task first
+    # Create a test task first
     client.post('/api/tasks', json={
         'title': 'Test Task',
         'description': 'Test Description'
@@ -58,4 +63,7 @@ def test_get_tasks(client):
     
     response = client.get('/api/tasks')
     assert response.status_code == 200
-    assert len(response.json) > 0 
+    assert len(response.json) == 1
+    assert response.json[0]['title'] == 'Test Task'
+    assert response.json[0]['description'] == 'Test Description'
+    assert not response.json[0]['done'] 

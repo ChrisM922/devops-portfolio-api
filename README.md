@@ -1,5 +1,7 @@
 # DevOps Project
 
+![CI](https://github.com/ChrisM922/devops-portfolio-api/actions/workflows/ci.yml/badge.svg)
+
 A Flask-based web application with PostgreSQL database, containerized using Docker.
 
 ## 🚀 Features

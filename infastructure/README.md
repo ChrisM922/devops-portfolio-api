@@ -1,78 +1,59 @@
-# Deployment with Render CLI
+# Deployment with Render
 
-This directory contains deployment configurations for managing the application on Render.
+This directory contains deployment configurations for the application on Render.
 
-## Prerequisites
+## Setup
 
-1. Install Render CLI:
+1. Create a new Web Service on Render:
+   - Go to [dashboard.render.com](https://dashboard.render.com)
+   - Click "New +" and select "Web Service"
+   - Connect your GitHub repository
+   - Configure the service:
+     - Name: todo-app
+     - Environment: Python
+     - Build Command: `pip install -r requirements.txt`
+     - Start Command: `gunicorn app.main:app`
 
-   ```bash
-   curl -o render https://render.com/download/cli/linux/latest
-   chmod +x render
-   sudo mv render /usr/local/bin/
-   ```
+2. Create a PostgreSQL database:
+   - Click "New +" and select "PostgreSQL"
+   - Name: todo-db
+   - Database: todo
+   - User: todo_user
+   - Plan: Free
 
-2. Login to Render:
+3. Configure environment variables in Render:
+   - `FLASK_ENV`: production
+   - `DATABASE_URL`: (will be provided by Render)
 
-   ```bash
-   render login
-   ```
+4. Get the deploy hook:
+   - Go to your web service settings
+   - Find the "Deploy Hook" section
+   - Copy the deploy hook URL
+
+5. Add the deploy hook to GitHub Secrets:
+   - Go to your GitHub repository
+   - Go to Settings > Secrets and variables > Actions
+   - Add a new secret named `RENDER_DEPLOY_HOOK` with your deploy hook URL
 
 ## Deployment
 
-1. Make sure you're logged in to Render:
+The application will automatically deploy when:
 
-   ```bash
-   render whoami
-   ```
+1. You push changes to the main branch
+2. The GitHub Actions workflow runs successfully
+3. The deploy hook is triggered
 
-2. Deploy using the script:
+## Monitoring
 
-   ```bash
-   ./deploy.sh
-   ```
+Monitor your application through the Render dashboard:
 
-   Or manually:
-
-   ```bash
-   render deploy
-   ```
-
-## Infrastructure Components
-
-- PostgreSQL Database
-  - Free tier
-  - Oregon region
-  - Automatic backups
-
-- Web Service
-  - Free tier
-  - Oregon region
-  - Connected to PostgreSQL database
-  - Environment variables configured automatically
-
-## Environment Variables
-
-Make sure to set these environment variables in your Render dashboard:
-
-- `DATABASE_URL`: Your PostgreSQL connection string
-- `FLASK_ENV`: Set to "production"
-
-## Maintenance
-
-To update your application:
-
-1. Push changes to your repository
-2. Run the deployment script or use `render deploy`
-
-To view logs:
-
-```bash
-render logs
-```
+- View logs
+- Check performance metrics
+- Monitor database status
+- View deployment history
 
 ## Security Notes
 
-- Keep your Render account credentials secure
+- Keep your deploy hook URL secure
+- Monitor your application's performance
 - Review deployment logs for any issues
-- Monitor your application's performance in the Render dashboard

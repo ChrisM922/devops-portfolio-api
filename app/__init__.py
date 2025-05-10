@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from app.config import Config
-from app.database import db  # ✅ correct import
+from app.database import db
+from app.models import Task  # Import the Task model
 import logging
 
 
@@ -16,13 +17,24 @@ def create_app():
 
     with app.app_context():
         try:
-            db.create_all()  # Create database tables
+            # Drop all tables first (in development)
+            if app.config.get('FLASK_ENV') == 'development':
+                db.drop_all()
+            
+            # Create all tables
+            db.create_all()
+            
+            # Verify table exists
+            if not db.engine.dialect.has_table(db.engine, 'task'):
+                app.logger.error("Task table was not created!")
+                raise Exception("Database initialization failed")
+                
             app.logger.info("Database tables created successfully")
         except Exception as e:
             app.logger.error(f"Error creating database tables: {str(e)}")
             raise
 
-    from app.routes import register_routes  # delay route import
+    from app.routes import register_routes
     register_routes(app)
 
     # Error handlers

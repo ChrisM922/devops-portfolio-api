@@ -2,6 +2,8 @@ from app.database import db
 
 
 class Task(db.Model):
+    __tablename__ = 'task'  # Explicitly set table name
+    
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(256))

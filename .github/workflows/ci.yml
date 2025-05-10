@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,16 +7,15 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:13
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: tasks_db
+          POSTGRES_DB: test_db
         ports:
           - 5432:5432
         options: >-
@@ -25,15 +24,11 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tasks_db
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
           python-version: "3.10"
 
@@ -41,12 +36,47 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install flake8 pytest
 
       - name: Lint with flake8
         run: |
-          pip install flake8
-          flake8 app
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Run basic DB test
+      - name: Test with pytest
+        env:
+          FLASK_APP: app.main:app
+          FLASK_ENV: test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
         run: |
-          python -c "import os; from app import create_app; from app.database import db; from app.models import Task; app = create_app(); app.app_context().__enter__(); db.create_all(); task = Task(title='CI Test', description='Created by GitHub Actions'); db.session.add(task); db.session.commit(); assert Task.query.count() > 0"
+          pytest
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/flask-todo:latest
+
+      - name: Deploy to Render
+        uses: render/deploy-action@v1
+        with:
+          apiKey: ${{ secrets.RENDER_API_KEY }}
+          serviceId: ${{ secrets.RENDER_SERVICE_ID }}

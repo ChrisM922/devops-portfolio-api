@@ -12,6 +12,7 @@ def register_routes(app):
             db.session.execute('SELECT 1')
             return jsonify({"status": "healthy", "database": "connected"}), 200
         except Exception as e:
+            app.logger.error(f"Health check failed: {str(e)}")
             return jsonify({"status": "unhealthy", "error": str(e)}), 500
 
     @app.route('/')
@@ -19,7 +20,7 @@ def register_routes(app):
         tasks = Task.query.all()
         return render_template('index.html', tasks=tasks)
 
-    @app.route('/tasks', methods=['POST'])
+    @app.route('/api/tasks', methods=['POST'])
     def create_task():
         data = request.form if request.form else request.get_json()
         task = Task(
@@ -37,7 +38,7 @@ def register_routes(app):
             'done': task.done
         }), 201
 
-    @app.route('/tasks', methods=['GET'])
+    @app.route('/api/tasks', methods=['GET'])
     def get_tasks():
         tasks = Task.query.all()
         if request.headers.get('HX-Request'):
@@ -51,7 +52,7 @@ def register_routes(app):
             } for t in tasks
         ])
 
-    @app.route('/tasks/<int:task_id>', methods=['GET'])
+    @app.route('/api/tasks/<int:task_id>', methods=['GET'])
     def get_task(task_id):
         task = Task.query.get(task_id)
         if not task:
@@ -65,7 +66,7 @@ def register_routes(app):
             'done': task.done
         })
 
-    @app.route('/tasks/<int:task_id>', methods=['PUT'])
+    @app.route('/api/tasks/<int:task_id>', methods=['PUT'])
     def update_task(task_id):
         task = Task.query.get(task_id)
         if not task:
@@ -84,7 +85,7 @@ def register_routes(app):
             'done': task.done
         })
 
-    @app.route('/tasks/<int:task_id>', methods=['DELETE'])
+    @app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
     def delete_task(task_id):
         task = Task.query.get(task_id)
         if not task:

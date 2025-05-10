@@ -3,27 +3,34 @@ from app import create_app
 from app.models import Task
 from app.database import db
 from sqlalchemy import inspect
+import logging
 
 @pytest.fixture
 def app():
     app = create_app()
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/test_db'
+    app.config['FLASK_ENV'] = 'test'
     
     with app.app_context():
-        # Create tables
-        db.create_all()
-        
-        # Verify table exists
-        inspector = inspect(db.engine)
-        if 'task' not in inspector.get_table_names():
-            raise Exception("Test database initialization failed")
+        try:
+            # Create tables
+            db.create_all()
             
-        yield app
-        
-        # Cleanup
-        db.session.remove()
-        db.drop_all()
+            # Verify table exists
+            inspector = inspect(db.engine)
+            if 'task' not in inspector.get_table_names():
+                raise Exception("Test database initialization failed")
+                
+            yield app
+            
+        except Exception as e:
+            app.logger.error(f"Test setup failed: {str(e)}")
+            raise
+        finally:
+            # Cleanup
+            db.session.remove()
+            db.drop_all()
 
 @pytest.fixture
 def client(app):

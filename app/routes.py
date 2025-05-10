@@ -134,4 +134,4 @@ def register_routes(app):
         except Exception as e:
             db.session.rollback()
             logger.error(f"Error deleting task {task_id}: {str(e)}")
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": str(e)}), 500 

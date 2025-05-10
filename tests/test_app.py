@@ -14,12 +14,15 @@ def app():
     # Create a new registry for each test
     registry = CollectorRegistry()
     
-    app = create_app({
+    result = create_app({
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'WTF_CSRF_ENABLED': False
     }, registry=registry)
+    
+    # Unpack the result tuple
+    app = result[0]
     
     with app.app_context():
         db.create_all()

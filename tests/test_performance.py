@@ -1,12 +1,14 @@
 import pytest
 import time
+import threading
 from app import create_app
 from app.database import db
 from app.models import Task
 
 @pytest.fixture
 def app():
-    app = create_app()
+    result = create_app()
+    app = result[0]  # Unpack the tuple to get the app object
     app.config.update({
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:',

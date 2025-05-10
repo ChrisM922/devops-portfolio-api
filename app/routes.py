@@ -17,6 +17,7 @@ def register_routes(app):
             return jsonify({"status": "healthy", "database": "connected"}), 200
         except Exception as e:
             logger.error(f"Health check failed: {str(e)}")
+            db.session.rollback()  # Ensure session is rolled back
             return jsonify({"status": "unhealthy", "error": str(e)}), 500
 
     @app.route('/')
@@ -29,6 +30,9 @@ def register_routes(app):
     def create_task():
         try:
             data = request.form if request.form else request.get_json()
+            if not data or not data.get('title'):
+                raise ValueError("Title is required")
+            
             task = Task(
                 title=data.get('title'),
                 description=data.get('description')
@@ -36,8 +40,9 @@ def register_routes(app):
             db.session.add(task)
             db.session.commit()
             logger.info(f"Created new task: {task.title}")
+            
             if request.headers.get('HX-Request'):
-                return render_template('_task.html', task=task)
+                return render_template('_task.html', task=task), 201
             return jsonify({
                 'id': task.id,
                 'title': task.title,
@@ -47,6 +52,8 @@ def register_routes(app):
         except Exception as e:
             db.session.rollback()
             logger.error(f"Error creating task: {str(e)}")
+            if request.headers.get('HX-Request'):
+                return str(e), 500
             return jsonify({"error": str(e)}), 500
 
     @app.route('/api/tasks', methods=['GET'])

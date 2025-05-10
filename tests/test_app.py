@@ -351,6 +351,12 @@ def test_logging_configuration(app):
     """Test logging configuration."""
     import logging
     
+    # Configure logging for the test
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    
     # Check if logger is configured
     logger = logging.getLogger(__name__)
     assert logger.level == logging.INFO

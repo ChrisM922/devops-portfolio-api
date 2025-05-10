@@ -27,6 +27,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Add metrics endpoint
+@app.route('/metrics')
+def metrics_endpoint():
+    return metrics.generate_latest()
+
 if __name__ == '__main__':
     logger.info("Starting application...")
     app.run(debug=True, host='0.0.0.0', port=5000)

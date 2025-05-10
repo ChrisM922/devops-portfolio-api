@@ -87,14 +87,27 @@ def test_database_rollback(app, client):
         'description': 'Testing database rollback'
     })
     assert response.status_code == 201
-    task_id = response.json['id']
+    initial_task_id = response.json['id']
     
-    # Simulate error by sending invalid data
-    error_response = client.post('/api/tasks', json={'invalid': 'data'})
+    # Try to create a task with missing required fields
+    error_response = client.post('/api/tasks', json={})
     assert error_response.status_code == 500
     
     # Verify database state is unchanged
     get_response = client.get('/api/tasks')
     assert get_response.status_code == 200
     assert len(get_response.json) == 1
-    assert get_response.json[0]['id'] == task_id 
+    assert get_response.json[0]['id'] == initial_task_id
+    
+    # Try to create a task with invalid data types
+    error_response = client.post('/api/tasks', json={
+        'title': 123,  # Should be string
+        'description': ['invalid'],  # Should be string
+    })
+    assert error_response.status_code == 500
+    
+    # Verify database state is still unchanged
+    get_response = client.get('/api/tasks')
+    assert get_response.status_code == 200
+    assert len(get_response.json) == 1
+    assert get_response.json[0]['id'] == initial_task_id 

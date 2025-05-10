@@ -2,6 +2,7 @@ import pytest
 from app import create_app
 from app.models import Task
 from app.database import db
+from sqlalchemy import inspect
 
 @pytest.fixture
 def app():
@@ -10,8 +11,17 @@ def app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/test_db'
     
     with app.app_context():
+        # Create tables
         db.create_all()
+        
+        # Verify table exists
+        inspector = inspect(db.engine)
+        if 'task' not in inspector.get_table_names():
+            raise Exception("Test database initialization failed")
+            
         yield app
+        
+        # Cleanup
         db.session.remove()
         db.drop_all()
 

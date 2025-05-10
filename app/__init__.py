@@ -1,9 +1,8 @@
 from flask import Flask, jsonify
 from app.config import Config
 from app.database import db
-from app.models import Task  # Import the Task model
+from app.models import Task
 import logging
-
 
 def create_app():
     app = Flask(__name__)
@@ -23,12 +22,6 @@ def create_app():
             
             # Create all tables
             db.create_all()
-            
-            # Verify table exists
-            if not db.engine.dialect.has_table(db.engine, 'task'):
-                app.logger.error("Task table was not created!")
-                raise Exception("Database initialization failed")
-                
             app.logger.info("Database tables created successfully")
         except Exception as e:
             app.logger.error(f"Error creating database tables: {str(e)}")

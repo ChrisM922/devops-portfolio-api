@@ -45,6 +45,7 @@ def register_routes(app):
                 'done': task.done
             }), 201
         except Exception as e:
+            db.session.rollback()
             logger.error(f"Error creating task: {str(e)}")
             return jsonify({"error": str(e)}), 500
 
@@ -64,13 +65,14 @@ def register_routes(app):
                 } for t in tasks
             ])
         except Exception as e:
+            db.session.rollback()
             logger.error(f"Error retrieving tasks: {str(e)}")
             return jsonify({"error": str(e)}), 500
 
     @app.route('/api/tasks/<int:task_id>', methods=['GET'])
     def get_task(task_id):
         try:
-            task = Task.query.get(task_id)
+            task = db.session.get(Task, task_id)
             if not task:
                 logger.warning(f"Task {task_id} not found")
                 return jsonify({'error': 'Task not found'}), 404
@@ -84,13 +86,14 @@ def register_routes(app):
                 'done': task.done
             })
         except Exception as e:
+            db.session.rollback()
             logger.error(f"Error retrieving task {task_id}: {str(e)}")
             return jsonify({"error": str(e)}), 500
 
     @app.route('/api/tasks/<int:task_id>', methods=['PUT'])
     def update_task(task_id):
         try:
-            task = Task.query.get(task_id)
+            task = db.session.get(Task, task_id)
             if not task:
                 logger.warning(f"Task {task_id} not found for update")
                 return jsonify({'error': 'Task not found'}), 404
@@ -109,13 +112,14 @@ def register_routes(app):
                 'done': task.done
             })
         except Exception as e:
+            db.session.rollback()
             logger.error(f"Error updating task {task_id}: {str(e)}")
             return jsonify({"error": str(e)}), 500
 
     @app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
     def delete_task(task_id):
         try:
-            task = Task.query.get(task_id)
+            task = db.session.get(Task, task_id)
             if not task:
                 logger.warning(f"Task {task_id} not found for deletion")
                 return jsonify({'error': 'Task not found'}), 404
@@ -126,5 +130,6 @@ def register_routes(app):
                 return ''
             return jsonify({'message': 'Task deleted'})
         except Exception as e:
+            db.session.rollback()
             logger.error(f"Error deleting task {task_id}: {str(e)}")
             return jsonify({"error": str(e)}), 500

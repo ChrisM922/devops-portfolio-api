@@ -1,19 +1,27 @@
+import logging
 from flask import Flask, jsonify
 from app.config import Config
 from app.database import db
 from app.models import Task
-import logging
 
-def create_app():
+def create_app(config_object=None):
     app = Flask(__name__)
-    app.config.from_object(Config)
     
     # Configure logging
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    logger = logging.getLogger(__name__)
     
-    # Initialize database
+    # Load configuration
+    if config_object:
+        app.config.from_object(config_object)
+    
+    # Initialize extensions
     db.init_app(app)
-
+    
+    # Create database tables
     with app.app_context():
         try:
             # Drop all tables first (in development)
@@ -22,24 +30,26 @@ def create_app():
             
             # Create all tables
             db.create_all()
-            app.logger.info("Database tables created successfully")
+            logger.info("Database tables created successfully")
         except Exception as e:
-            app.logger.error(f"Error creating database tables: {str(e)}")
+            logger.error(f"Error creating database tables: {str(e)}")
             raise
-
+    
+    # Register routes
     from app.routes import register_routes
     register_routes(app)
-
+    
     # Error handlers
     @app.errorhandler(500)
-    def handle_500_error(e):
-        app.logger.error(f"500 error: {str(e)}")
+    def internal_error(error):
+        logger.error(f"500 error: {str(error)}")
         return jsonify({"error": "Internal server error"}), 500
-
+    
     @app.errorhandler(404)
-    def handle_404_error(e):
-        return jsonify({"error": "Not found"}), 404
-
+    def not_found_error(error):
+        logger.warning(f"404 error: {str(error)}")
+        return jsonify({"error": "Resource not found"}), 404
+    
     return app
 
 # This file makes the app directory a Python package

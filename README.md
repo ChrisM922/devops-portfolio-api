@@ -11,6 +11,10 @@ A Flask-based web application with PostgreSQL database, containerized using Dock
 - Docker containerization
 - Development environment with hot-reloading
 - SQLAlchemy ORM for database operations
+- Observability and monitoring
+  - Structured logging
+  - Prometheus metrics
+  - Health checks
 
 ## 📋 Prerequisites
 
@@ -100,3 +104,50 @@ The application will be available at `http://localhost:5000`
 ## Live Demo
 
 The application is deployed at: [https://devops-portfolio-api.onrender.com](https://devops-portfolio-api.onrender.com)
+
+## Observability
+
+### Logging
+
+The application uses Python's built-in logging module with structured formatting:
+
+- Logs are written to stdout for container platforms
+- Log level: INFO for development, WARNING/ERROR for production
+- Log format: `%(asctime)s - %(name)s - %(levelname)s - %(message)s`
+
+View logs:
+
+- Development: Console output
+- Production: Render dashboard logs
+- Metrics: `/metrics` endpoint (Prometheus format)
+
+### Monitoring
+
+The application exposes Prometheus metrics at `/metrics`:
+
+- Request counts and latencies
+- Task operation counts
+- Database connection status
+- Application version info
+
+### Health Checks
+
+A health check endpoint is available at `/health`:
+
+- Database connection status
+- Application status
+- Returns 200 if healthy, 500 if unhealthy
+
+## Monitoring Setup
+
+1. View application logs in the Render dashboard
+2. Access Prometheus metrics at `/metrics`
+3. Monitor application health at `/health`
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request

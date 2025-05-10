@@ -21,6 +21,23 @@ def register_routes(app):
             logger.error(f"Error retrieving tasks: {str(e)}")
             return render_template('index.html', error=str(e)), 500
 
+    @app.route('/health', methods=['GET'])
+    def health_check():
+        """Health check endpoint for monitoring."""
+        try:
+            # Test database connection
+            db.session.execute(text('SELECT 1'))
+            return jsonify({
+                'status': 'healthy',
+                'database': 'connected'
+            }), 200
+        except Exception as e:
+            current_app.logger.error(f"Health check failed: {str(e)}")
+            return jsonify({
+                'status': 'error',
+                'error': str(e)
+            }), 500
+
     @app.route('/api/tasks', methods=['GET'])
     def get_tasks():
         """Get all tasks."""
@@ -118,20 +135,3 @@ def register_routes(app):
             db.session.rollback()
             logger.error(f"Error deleting task {task_id}: {str(e)}")
             return jsonify({"error": str(e)}), 500
-
-    @app.route('/health', methods=['GET'])
-    def health_check():
-        """Health check endpoint for monitoring."""
-        try:
-            # Test database connection
-            db.session.execute(text('SELECT 1'))
-            return jsonify({
-                'status': 'healthy',
-                'database': 'connected'
-            }), 200
-        except Exception as e:
-            current_app.logger.error(f"Health check failed: {str(e)}")
-            return jsonify({
-                'status': 'error',
-                'error': str(e)
-            }), 500

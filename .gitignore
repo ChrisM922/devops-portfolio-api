@@ -7,3 +7,11 @@ venv/
 *.sqlite3
 postgres-data/
 .DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+.terraform.lock.hcl

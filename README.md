@@ -1,7 +1,7 @@
 # DevOps Project
 
 [![CI](https://github.com/ChrisM922/devops-portfolio-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ChrisM922/devops-portfolio-api/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/ChrisM922/devops-portfolio-api/branch/main/graph/badge.svg)](https://codecov.io/gh/ChrisM922/devops-portfolio-api)
+[![codecov](https://codecov.io/gh/ChrisM922/devops-portfolio-api/graph/badge.svg?token=WILI4EP995)](https://codecov.io/gh/ChrisM922/devops-portfolio-api)
 [![Python Version](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
 [![Flask Version](https://img.shields.io/badge/flask-3.1.0-blue.svg)](https://flask.palletsprojects.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -166,6 +166,8 @@ The project maintains high code coverage through comprehensive testing:
 - Error handling coverage
 
 Current coverage: [![Coverage](https://codecov.io/gh/ChrisM922/devops-portfolio-api/branch/main/graph/badge.svg)](https://codecov.io/gh/ChrisM922/devops-portfolio-api)
+
+![Code Coverage Sunburst](https://codecov.io/gh/ChrisM922/devops-portfolio-api/graphs/sunburst.svg?token=WILI4EP995)
 
 View detailed coverage report: [Codecov Dashboard](https://codecov.io/gh/ChrisM922/devops-portfolio-api)
 

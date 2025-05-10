@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "app/main.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app.main:app"]

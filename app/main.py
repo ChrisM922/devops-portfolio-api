@@ -118,6 +118,7 @@ def create_app(config_class=Config, registry=None):
         labels={}
     )
     
+    # Dummy histogram for request latency
     request_latency = metrics.histogram(
         'flask_http_request_latency_dummy',
         'Dummy histogram for test compatibility',

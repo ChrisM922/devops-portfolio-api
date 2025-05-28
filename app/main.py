@@ -111,6 +111,9 @@ def create_app(config_class=Config, registry=None):
         db.session.rollback()
         return jsonify({"error": "Internal server error"}), 500
 
+    # Register the error handler explicitly
+    app.register_error_handler(500, internal_error)
+
     # For backward compatibility with tests that expect 5 return values
     request_count = metrics.counter(
         'flask_http_request_count_dummy',
